@@ -121,16 +121,29 @@ public class DBConnector {
         conn.close();
         return lecturerReportList;
     }
-    
-     public User login(String username, String password) throws SQLException {
+
+    public User login(String username, String password) throws SQLException {
 
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
         stmt.execute("USE CMS;");
-        ResultSet rs = stmt.executeQuery("SELECT * FROM Users WHERE username='" + username + "' AND password='" + password + "'"); //read data
+        ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'"); //read data
         rs.next();
         String role = rs.getString("role");
         conn.close();
         return new User(username, password, role);
+    }
+
+    public void addUser(User user) {
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            Statement stmt = conn.createStatement();
+            stmt.execute("USE CMS;");
+            stmt.execute(String.format("INSERT INTO users (username, password, role) VALUES ('%s', '%s', '%s');",
+                    user.getUsername(), user.getPassword(), user.getRole()));
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
