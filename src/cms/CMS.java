@@ -23,25 +23,25 @@ public class CMS {
         DBConnector db = new DBConnector();
         printOptionsMenu(sc, userLogin);
     }
-    
+
     private static User login(Scanner sc) {
         System.out.println("Inform an username");
         String username = sc.next();
-        
+
         System.out.println("Inform a password");
         String password = sc.next();
         try {
             DBConnector db = new DBConnector();
-            
+
             User user = db.login(username, password);
-            
+
             return user;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    
+
     private static void printOptionsMenu(Scanner sc, User user) {
         switch (user.getRole()) {
             case "Admin":
@@ -51,7 +51,7 @@ public class CMS {
                 throw new AssertionError();
         }
     }
-    
+
     private static void printAdminMenu(Scanner sc, Boolean userlogged) {
         while (userlogged) {
             System.out.println("\n");
@@ -59,18 +59,18 @@ public class CMS {
             System.out.println("2 - modify an user");
             System.out.println("3 - delete an user");
             System.out.println("4 - logoff");
-            
+
             int options = Integer.parseInt(sc.next());
-            
+
             switch (options) {
                 case 1:
                     addNewUser(sc);
                     break;
                 case 2:
-                    
+
                     break;
                 case 3:
-                    
+
                     break;
                 case 4:
                     userlogged = false;
@@ -85,18 +85,22 @@ public class CMS {
     private static void addNewUser(Scanner sc) {
         System.out.println("Inform an username");
         String username = sc.next();
-        
+
         System.out.println("Inform a password");
         String password = sc.next();
-        
+
         System.out.println("Inform a role");
         String role = sc.next();
-        
+
         User newUser = new User(username, password, role);
-        
+
         try {
-            DBConnector db = new DBConnector();
-            db.addUser(newUser);
+            if (newUser.getRole().equals("Office")  || newUser.getRole().equals("Lecturer")) {
+                DBConnector db = new DBConnector();
+                db.addUser(newUser);
+            } else {
+                System.out.println("Role not valid");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
