@@ -18,14 +18,10 @@ public class CMS {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         User userLogin = login(sc);
-        
+
         // TODO code application logic here
         DBConnector db = new DBConnector();
-        try {
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        printOptionsMenu(sc, userLogin);
     }
 
     private static User login(Scanner sc) {
@@ -36,13 +32,72 @@ public class CMS {
         String password = sc.next();
         try {
             DBConnector db = new DBConnector();
-            
+
             User user = db.login(username, password);
-            
+
             return user;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static void printOptionsMenu(Scanner sc, User user) {
+        switch (user.getRole()) {
+            case "Admin":
+                printAdminMenu(sc, true);
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+
+    private static void printAdminMenu(Scanner sc, Boolean userlogged) {
+        while (userlogged) {
+            System.out.println("\n");
+            System.out.println("1 - add new user");
+            System.out.println("2 - modify an user");
+            System.out.println("3 - delete an user");
+            System.out.println("4 - logoff");
+
+            int options = Integer.parseInt(sc.next());
+
+            switch (options) {
+                case 1:
+                    addNewUser(sc);
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+                    userlogged = false;
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+        }
+    }
+    //method to read the inputs and create the User object
+
+    private static void addNewUser(Scanner sc) {
+        System.out.println("Inform an username");
+        String username = sc.next();
+
+        System.out.println("Inform a password");
+        String password = sc.next();
+
+        System.out.println("Inform a role");
+        String role = sc.next();
+
+        User newUser = new User(username, password, role);
+
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
