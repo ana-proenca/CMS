@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /*
@@ -119,5 +120,17 @@ public class DBConnector {
 
         conn.close();
         return lecturerReportList;
+    }
+    
+     public User login(String username, String password) throws SQLException {
+
+        Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        Statement stmt = conn.createStatement();
+        stmt.execute("USE CMS;");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM Users WHERE username='" + username + "' AND password='" + password + "'"); //read data
+        rs.next();
+        String role = rs.getString("role");
+        conn.close();
+        return new User(username, password, role);
     }
 }
