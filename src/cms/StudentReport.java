@@ -9,6 +9,7 @@ package cms;
  * @author anaclaudiaproenca
  */
 public class StudentReport {
+
     private String studentId;
     private String studentName;
     private String studentSurname;
@@ -17,16 +18,22 @@ public class StudentReport {
     private int grade;
     private String moduleCompleted;
 
+    public StudentReport(String studentId, String studentName, String studentSurname, String courseName, String moduleName, int grade, String moduleCompleted) {
+        this.studentId = studentId;
+        this.studentName = studentName;
+        this.studentSurname = studentSurname;
+        this.courseName = courseName;
+        this.moduleName = moduleName;
+        this.grade = grade;
+        this.moduleCompleted = moduleCompleted;
+    }
+
     public String getStudentId() {
         return studentId;
     }
 
     public String getStudentName() {
-        return studentName;
-    }
-
-    public String getStudentSurname() {
-        return studentSurname;
+        return studentName + " " + studentSurname;
     }
 
     public String getCourseName() {

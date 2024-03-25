@@ -52,4 +52,38 @@ public class DBConnector {
         conn.close();
         return courseReportList;
     }
+     
+     public ArrayList<StudentReport> getStudentReport() throws SQLException {
+        Connection conn = DriverManager.getConnection(DB_URL + "/CMS", USER, PASSWORD);
+        PreparedStatement preparedStatement = conn.prepareStatement("SELECT s.student_id AS studentId,\n" +
+                                                                    "s.student_name AS studentName,\n" +
+                                                                    "s.student_surname AS studentSurname,\n" +
+                                                                    "c.course_name AS courseName,\n" +
+                                                                    "m.module_name AS moduleName,\n" +
+                                                                    "g.grade AS grade,\n" +
+                                                                    "g.completed AS moduleCompleted\n" +
+                                                                    "FROM students s\n" +
+                                                                    "INNER JOIN enrollments e on s.student_id = e.student_id\n" +
+                                                                    "INNER JOIN courses c on c.course_id = e.course_id\n" +
+                                                                    "INNER JOIN modules m on m.module_id = e.module_id\n" +
+                                                                    "INNER JOIN grades g on g.grade_id = e.grade_id; ");
+        ResultSet rs = preparedStatement.executeQuery();
+        rs.next();
+        ArrayList<StudentReport> studentReportList = new ArrayList<>();
+
+        while (rs.next()) {
+            String studentId = rs.getString("studentId");
+            String studentName = rs.getString("studentName");
+            String studentSurname = rs.getString("studentSurname");
+            String courseName = rs.getString("courseName");
+            String moduleName = rs.getString("moduleName");
+            int grade = rs.getInt("grade");
+            String moduleCompleted = rs.getString("moduleCompleted");
+
+            studentReportList.add(new StudentReport(studentId, studentName, studentSurname, courseName, moduleName, grade, moduleCompleted));
+        }
+
+        conn.close();
+        return studentReportList;
+    }
 }
