@@ -4,6 +4,7 @@
  */
 package cms;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -47,6 +48,9 @@ public class CMS {
             case "Admin":
                 printAdminMenu(sc, true);
                 break;
+            case "Office":
+                printOfficeMenu(sc, true);
+                break;
             default:
                 throw new AssertionError();
         }
@@ -80,8 +84,33 @@ public class CMS {
             }
         }
     }
-    //method to read the inputs and create the User object
 
+    private static void printOfficeMenu(Scanner sc, Boolean userlogged) {
+        while (userlogged) {
+            System.out.println("\n");
+            System.out.println("1 - generate all reports");
+            System.out.println("2 - change username and password");
+            System.out.println("3 - logoff");
+
+            int options = Integer.parseInt(sc.next());
+
+            switch (options) {
+                case 1:
+                    generateAllReports();
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+                    userlogged = false;
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+        }
+    }
+
+    //method to read the inputs and create the User object
     private static void addNewUser(Scanner sc) {
         System.out.println("Inform an username");
         String username = sc.next();
@@ -95,12 +124,42 @@ public class CMS {
         User newUser = new User(username, password, role);
 
         try {
-            if (newUser.getRole().equals("Office")  || newUser.getRole().equals("Lecturer")) {
+            if (newUser.getRole().equals("Office") || newUser.getRole().equals("Lecturer")) {
                 DBConnector db = new DBConnector();
                 db.addUser(newUser);
             } else {
                 System.out.println("Role not valid");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void generateAllReports() {
+        try {
+            DBConnector db = new DBConnector();
+            
+            System.out.println("\nGenerating Course Report");
+            ArrayList<CourseReport> courseReportList = db.getCourseReport();
+
+            for (CourseReport courseReport : courseReportList) {
+                System.out.println(courseReport.getCourseName() + ", " + courseReport.getModuleName() + ", " + courseReport.getNumberOfStudents() + ", " + courseReport.getLecturerName() + ", " + courseReport.getRoomName());
+            }
+
+            System.out.println("\nGenerating Student Report");
+            ArrayList<StudentReport> studentReportList = db.getStudentReport();
+
+            for (StudentReport studentReport : studentReportList) {
+                System.out.println(studentReport.getStudentName() + ", " + studentReport.getCourseName() + ", " + studentReport.getModuleName() + ", " + studentReport.getGrade() + ", " + studentReport.getModuleCompleted());
+            }
+
+            System.out.println("\nGenerating Lecturer Report");
+            ArrayList<LecturerReport> lecturerReportList = db.getLecturerReport();
+
+            for (LecturerReport lecturerReport : lecturerReportList) {
+                System.out.println(lecturerReport.getLecturerName() + ", " + lecturerReport.getLecturerRole() + ", " + lecturerReport.getModuleName() + ", " + lecturerReport.getModuleDateStarted() + ", " + lecturerReport.getModuleTypeClass() + ", " + lecturerReport.getNumberOfStudents());
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
