@@ -17,33 +17,33 @@ public class CMS {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        User userLogin = login(sc);
+        try {
+            Scanner sc = new Scanner(System.in);
+            User userLogin = login(sc);
 
-        // TODO code application logic here
-        DBConnector db = new DBConnector();
-        printOptionsMenu(sc, userLogin);
+            // TODO code application logic here
+            DBConnector db = new DBConnector();
+            printOptionsMenu(sc, userLogin);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private static User login(Scanner sc) {
+    private static User login(Scanner sc) throws Exception {
         System.out.println("Inform an username");
         String username = sc.next();
 
         System.out.println("Inform a password");
         String password = sc.next();
-        try {
-            DBConnector db = new DBConnector();
 
-            User user = db.login(username, password);
+        DBConnector db = new DBConnector();
 
-            return user;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        User user = db.getUser(username, password);
+
+        return user;
     }
 
-    private static void printOptionsMenu(Scanner sc, User user) {
+    private static void printOptionsMenu(Scanner sc, User user) throws Exception {
         switch (user.getRole()) {
             case "Admin":
                 printAdminMenu(sc, true);
@@ -56,13 +56,14 @@ public class CMS {
         }
     }
 
-    private static void printAdminMenu(Scanner sc, Boolean userlogged) {
+    private static void printAdminMenu(Scanner sc, Boolean userlogged) throws Exception {
         while (userlogged) {
             System.out.println("\n");
             System.out.println("1 - add new user");
             System.out.println("2 - modify an user");
             System.out.println("3 - delete an user");
-            System.out.println("4 - logoff");
+            System.out.println("4 - change username and password");
+            System.out.println("5 - logoff");
 
             int options = Integer.parseInt(sc.next());
 
@@ -71,12 +72,15 @@ public class CMS {
                     addNewUser(sc);
                     break;
                 case 2:
-
+                    modifyUser(sc);
                     break;
                 case 3:
 
                     break;
                 case 4:
+                    userlogged = false;
+                    break;
+                case 5:
                     userlogged = false;
                     break;
                 default:
@@ -85,7 +89,7 @@ public class CMS {
         }
     }
 
-    private static void printOfficeMenu(Scanner sc, Boolean userlogged) {
+    private static void printOfficeMenu(Scanner sc, Boolean userlogged) throws Exception {
         while (userlogged) {
             System.out.println("\n");
             System.out.println("1 - generate all reports");
@@ -111,57 +115,75 @@ public class CMS {
     }
 
     //method to read the inputs and create the User object
-    private static void addNewUser(Scanner sc) {
+    private static void addNewUser(Scanner sc) throws Exception {
         System.out.println("Inform an username");
         String username = sc.next();
 
         System.out.println("Inform a password");
         String password = sc.next();
 
-        System.out.println("Inform a role");
+        System.out.println("Inform a role (Office or Lecturer");
         String role = sc.next();
 
         User newUser = new User(username, password, role);
 
-        try {
-            if (newUser.getRole().equals("Office") || newUser.getRole().equals("Lecturer")) {
-                DBConnector db = new DBConnector();
-                db.addUser(newUser);
-            } else {
-                System.out.println("Role not valid");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (newUser.getRole().equals("Office") || newUser.getRole().equals("Lecturer")) {
+            DBConnector db = new DBConnector();
+            db.addUser(newUser);
+        } else {
+            System.out.println("Role not valid");
         }
     }
 
-    private static void generateAllReports() {
-        try {
-            DBConnector db = new DBConnector();
-            
-            System.out.println("\nGenerating Course Report");
-            ArrayList<CourseReport> courseReportList = db.getCourseReport();
+    private static void modifyUser(Scanner sc) throws Exception {
+        System.out.println("Inform the current username");
+        String currentUsername = sc.next();
 
-            for (CourseReport courseReport : courseReportList) {
-                System.out.println(courseReport.getCourseName() + ", " + courseReport.getModuleName() + ", " + courseReport.getNumberOfStudents() + ", " + courseReport.getLecturerName() + ", " + courseReport.getRoomName());
-            }
+        System.out.println("Inform the current password");
+        String currentPassword = sc.next();
 
-            System.out.println("\nGenerating Student Report");
-            ArrayList<StudentReport> studentReportList = db.getStudentReport();
+        DBConnector db = new DBConnector();
 
-            for (StudentReport studentReport : studentReportList) {
-                System.out.println(studentReport.getStudentName() + ", " + studentReport.getCourseName() + ", " + studentReport.getModuleName() + ", " + studentReport.getGrade() + ", " + studentReport.getModuleCompleted());
-            }
+        User user = db.getUser(currentUsername, currentPassword);
 
-            System.out.println("\nGenerating Lecturer Report");
-            ArrayList<LecturerReport> lecturerReportList = db.getLecturerReport();
+        if (user != null) {
+            System.out.println("Inform the new username");
+            String newUsername = sc.next();
 
-            for (LecturerReport lecturerReport : lecturerReportList) {
-                System.out.println(lecturerReport.getLecturerName() + ", " + lecturerReport.getLecturerRole() + ", " + lecturerReport.getModuleName() + ", " + lecturerReport.getModuleDateStarted() + ", " + lecturerReport.getModuleTypeClass() + ", " + lecturerReport.getNumberOfStudents());
-            }
+            System.out.println("Inform the new password");
+            String newPassword = sc.next();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            user.setUsername(newUsername);
+            user.setPassword(newPassword);
+
+            db.updateUser(user);
+        } else {
+            System.out.println("User not found");
+        }
+    }
+
+    private static void generateAllReports() throws Exception {
+        DBConnector db = new DBConnector();
+
+        System.out.println("\nGenerating Course Report");
+        ArrayList<CourseReport> courseReportList = db.getCourseReport();
+
+        for (CourseReport courseReport : courseReportList) {
+            System.out.println(courseReport.getCourseName() + ", " + courseReport.getModuleName() + ", " + courseReport.getNumberOfStudents() + ", " + courseReport.getLecturerName() + ", " + courseReport.getRoomName());
+        }
+
+        System.out.println("\nGenerating Student Report");
+        ArrayList<StudentReport> studentReportList = db.getStudentReport();
+
+        for (StudentReport studentReport : studentReportList) {
+            System.out.println(studentReport.getStudentName() + ", " + studentReport.getCourseName() + ", " + studentReport.getModuleName() + ", " + studentReport.getGrade() + ", " + studentReport.getModuleCompleted());
+        }
+
+        System.out.println("\nGenerating Lecturer Report");
+        ArrayList<LecturerReport> lecturerReportList = db.getLecturerReport();
+
+        for (LecturerReport lecturerReport : lecturerReportList) {
+            System.out.println(lecturerReport.getLecturerName() + ", " + lecturerReport.getLecturerRole() + ", " + lecturerReport.getModuleName() + ", " + lecturerReport.getModuleDateStarted() + ", " + lecturerReport.getModuleTypeClass() + ", " + lecturerReport.getNumberOfStudents());
         }
     }
 }
