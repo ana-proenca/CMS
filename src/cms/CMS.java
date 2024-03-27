@@ -46,17 +46,17 @@ public class CMS {
     private static void printOptionsMenu(Scanner sc, User user) throws Exception {
         switch (user.getRole()) {
             case "Admin":
-                printAdminMenu(sc, true);
+                printAdminMenu(sc, user, true);
                 break;
             case "Office":
-                printOfficeMenu(sc, true);
+                printOfficeMenu(sc, user, true);
                 break;
             default:
                 throw new AssertionError();
         }
     }
 
-    private static void printAdminMenu(Scanner sc, Boolean userlogged) throws Exception {
+    private static void printAdminMenu(Scanner sc, User user, Boolean userlogged) throws Exception {
         while (userlogged) {
             System.out.println("\n");
             System.out.println("1 - add new user");
@@ -78,7 +78,7 @@ public class CMS {
                     deleteUser(sc);
                     break;
                 case 4:
-                  
+                    changeUsernameAndPassword(sc, user);
                     break;
                 case 5:
                     userlogged = false;
@@ -89,7 +89,7 @@ public class CMS {
         }
     }
 
-    private static void printOfficeMenu(Scanner sc, Boolean userlogged) throws Exception {
+    private static void printOfficeMenu(Scanner sc, User user, Boolean userlogged) throws Exception {
         while (userlogged) {
             System.out.println("\n");
             System.out.println("1 - generate all reports");
@@ -103,7 +103,7 @@ public class CMS {
                     generateAllReports();
                     break;
                 case 2:
-
+                    changeUsernameAndPassword(sc, user);
                     break;
                 case 3:
                     userlogged = false;
@@ -130,7 +130,7 @@ public class CMS {
         if (newUser.getRole().equals("Office") || newUser.getRole().equals("Lecturer")) {
             DBConnector db = new DBConnector();
             db.addUser(newUser);
-            
+
             System.out.println("User " + newUser.getUsername() + " added");
         } else {
             System.out.println("Role not valid");
@@ -178,6 +178,22 @@ public class CMS {
         } else {
             System.out.println("User not found");
         }
+    }
+
+    private static void changeUsernameAndPassword(Scanner sc, User user) throws Exception {
+        System.out.println("Inform the new username");
+        String newUsername = sc.next();
+
+        System.out.println("Inform the new password");
+        String newPassword = sc.next();
+
+        user.setUsername(newUsername);
+        user.setPassword(newPassword);
+
+        DBConnector db = new DBConnector();
+
+        db.updateUser(user);
+        System.out.println("Username and password updated");
     }
 
     private static void generateAllReports() throws Exception {
