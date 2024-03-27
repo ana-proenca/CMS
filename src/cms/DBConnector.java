@@ -134,7 +134,25 @@ public class DBConnector {
         conn.close();
         User user = new User(username, password, role);
         user.setUser_id(userId);
+
+        return user;
+    }
+
+    public User getUser(int userId) throws SQLException {
+
+        Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        Statement stmt = conn.createStatement();
+        stmt.execute("USE CMS;");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE user_id= " + userId); //read data
+        rs.next();
+        String role = rs.getString("role");
+        String username = rs.getString("username");
+        String password = rs.getString("password");
         
+        conn.close();
+        User user = new User(username, password, role);
+        user.setUser_id(userId);
+
         return user;
     }
 
@@ -154,6 +172,14 @@ public class DBConnector {
         stmt.execute(String.format("UPDATE users SET username = '%s', password = '%s'"
                 + "WHERE user_id = %d ;",
                 user.getUsername(), user.getPassword(), user.getUser_id()));
+        conn.close();
+    }
+    
+    public void deleteUser(int userId) throws SQLException {
+        Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        Statement stmt = conn.createStatement();
+        stmt.execute("USE CMS;");
+        stmt.execute(String.format("DELETE FROM users WHERE user_id = %d ;",userId));
         conn.close();
     }
 }

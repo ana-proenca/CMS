@@ -75,10 +75,10 @@ public class CMS {
                     modifyUser(sc);
                     break;
                 case 3:
-
+                    deleteUser(sc);
                     break;
                 case 4:
-                    userlogged = false;
+                  
                     break;
                 case 5:
                     userlogged = false;
@@ -130,21 +130,20 @@ public class CMS {
         if (newUser.getRole().equals("Office") || newUser.getRole().equals("Lecturer")) {
             DBConnector db = new DBConnector();
             db.addUser(newUser);
+            
+            System.out.println("User " + newUser.getUsername() + " added");
         } else {
             System.out.println("Role not valid");
         }
     }
 
     private static void modifyUser(Scanner sc) throws Exception {
-        System.out.println("Inform the current username");
-        String currentUsername = sc.next();
-
-        System.out.println("Inform the current password");
-        String currentPassword = sc.next();
+        System.out.println("Inform the user id");
+        int userId = Integer.parseInt(sc.next());
 
         DBConnector db = new DBConnector();
 
-        User user = db.getUser(currentUsername, currentPassword);
+        User user = db.getUser(userId);
 
         if (user != null) {
             System.out.println("Inform the new username");
@@ -157,6 +156,25 @@ public class CMS {
             user.setPassword(newPassword);
 
             db.updateUser(user);
+
+            System.out.println("User " + user.getUsername() + " updated");
+        } else {
+            System.out.println("User not found");
+        }
+    }
+
+    private static void deleteUser(Scanner sc) throws Exception {
+        System.out.println("Inform the user id");
+        int userId = Integer.parseInt(sc.next());
+
+        DBConnector db = new DBConnector();
+
+        User user = db.getUser(userId);
+
+        if (user != null) {
+            db.deleteUser(user.getUser_id());
+
+            System.out.println("User " + user.getUsername() + " deleted");
         } else {
             System.out.println("User not found");
         }
