@@ -4,10 +4,6 @@
  */
 package cms;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -24,8 +20,6 @@ public class CMS {
             Scanner sc = new Scanner(System.in);
             User userLogin = login(sc);
 
-            // TODO code application logic here
-            DBConnector db = new DBConnector();
             printOptionsMenu(sc, userLogin);
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,6 +41,7 @@ public class CMS {
     }
 
     private static void printOptionsMenu(Scanner sc, User user) throws Exception {
+        System.out.println("Welcome " + user.getUsername() + ". Your current role is: " + user.getRole());
         switch (user.getRole()) {
             case "Admin":
                 printAdminMenu(sc, user, true);
@@ -54,12 +49,12 @@ public class CMS {
             case "Office":
                 printOfficeMenu(sc, user, true);
                 break;
-                case "Lecturer":
+            case "Lecturer":
                 printLecturerMenu(sc, user, true);
                 break;
             default:
                 System.out.println("Invalid option");
-                    break;
+                break;
         }
     }
 
@@ -108,7 +103,8 @@ public class CMS {
 
             switch (options) {
                 case 1:
-                    generateAllReports(sc);
+                    Reports reports = new Reports(sc);
+                    reports.generateAllReports();
                     break;
                 case 2:
                     changeUsernameAndPassword(sc, user);
@@ -122,19 +118,19 @@ public class CMS {
             }
         }
     }
-    
-    private static void printLecturerMenu(Scanner sc, User user, Boolean userlogged)throws Exception{
-       while (userlogged) {
+
+    private static void printLecturerMenu(Scanner sc, User user, Boolean userlogged) throws Exception {
+        while (userlogged) {
             System.out.println("\n");
             System.out.println("1 - generate my report");
             System.out.println("2 - change username and password");
             System.out.println("3 - logoff");
 
             int options = Integer.parseInt(sc.next());
-
             switch (options) {
                 case 1:
-                    generateLectureReport(sc);
+                    Reports reports = new Reports(sc);
+                    reports.generateLectureReport();
                     break;
                 case 2:
                     changeUsernameAndPassword(sc, user);
@@ -229,161 +225,5 @@ public class CMS {
 
         db.updateUser(user);
         System.out.println("Username and password updated");
-    }
-
-    private static void generateLectureReport(Scanner sc) throws Exception{
-        System.out.println("Inform the report file format you want to save (csv or txt)");
-        String fileFormat = sc.next();
-
-        DBConnector db = new DBConnector();
-        
-        System.out.println("\nGenerating Lecturer Report");
-        ArrayList<LecturerReport> lecturerReportList = db.getLecturerReport();
-
-        for (LecturerReport lecturerReport : lecturerReportList) {
-            System.out.println(lecturerReport.getLecturerName() + ", " + lecturerReport.getLecturerRole() + ", " + lecturerReport.getModuleName() + ", " + lecturerReport.getModuleDateStarted() + ", " + lecturerReport.getModuleTypeClass() + ", " + lecturerReport.getNumberOfStudents());
-        }
-
-        saveLecturerReport(lecturerReportList, fileFormat);
-    }
-    private static void generateAllReports(Scanner sc) throws Exception {
-        System.out.println("Inform the report file format you want to save (csv or txt)");
-        String fileFormat = sc.next();
-
-        DBConnector db = new DBConnector();
-
-        System.out.println("\nGenerating Course Report");
-        ArrayList<CourseReport> courseReportList = db.getCourseReport();
-
-        for (CourseReport courseReport : courseReportList) {
-            System.out.println(courseReport.getCourseName() + ", " + courseReport.getModuleName() + ", " + courseReport.getNumberOfStudents() + ", " + courseReport.getLecturerName() + ", " + courseReport.getRoomName());
-        }
-
-        saveCourseReportFile(courseReportList, fileFormat);
-
-        System.out.println("\nGenerating Student Report");
-        ArrayList<StudentReport> studentReportList = db.getStudentReport();
-
-        for (StudentReport studentReport : studentReportList) {
-            System.out.println(studentReport.getStudentName() + ", " + studentReport.getStudentId() + ", " + studentReport.getCourseName() + ", " + studentReport.getModuleEnrolledIn() + ", " + studentReport.getModuleCompleted() + ", " + studentReport.getGrade() + ", " + studentReport.getModuleRepeat());
-        }
-
-        saveStudentReportFile(studentReportList, fileFormat);
-
-        System.out.println("\nGenerating Lecturer Report");
-        ArrayList<LecturerReport> lecturerReportList = db.getLecturerReport();
-
-        for (LecturerReport lecturerReport : lecturerReportList) {
-            System.out.println(lecturerReport.getLecturerName() + ", " + lecturerReport.getLecturerRole() + ", " + lecturerReport.getModuleName() + ", " + lecturerReport.getModuleDateStarted() + ", " + lecturerReport.getModuleTypeClass() + ", " + lecturerReport.getNumberOfStudents());
-        }
-
-        saveLecturerReport(lecturerReportList, fileFormat);
-
-    }
-
-    private static void saveCourseReportFile(ArrayList<CourseReport> courseReportList, String fileFormat) {
-        String outputFile = "course_report." + fileFormat;
-
-        // Delimiter used in CSV file
-        String delimiter = ",";
-
-        try {
-            BufferedWriter br = new BufferedWriter(new FileWriter(outputFile, true));
-
-            //Create the header of the file
-            br.write("Module Name" + delimiter);
-            br.write("Course Name" + delimiter);
-            br.write("Number of Students" + delimiter);
-            br.write("Lecturer Name" + delimiter);
-            br.write("Room Name" + delimiter);
-            br.newLine();
-
-            for (CourseReport courseReport : courseReportList) {
-                //Save each row of the report
-                br.write(courseReport.getModuleName() + delimiter);
-                br.write(courseReport.getCourseName() + delimiter);
-                br.write(courseReport.getNumberOfStudents() + delimiter);
-                br.write(courseReport.getLecturerName() + delimiter);
-                br.write(courseReport.getRoomName() + delimiter);
-                br.newLine(); // Write a new line after each row
-            }
-
-            br.close();
-
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-
-    private static void saveStudentReportFile(ArrayList<StudentReport> studentReportList, String fileFormat) {
-        String outputFile = "student_report." + fileFormat;
-
-        // Delimiter used in CSV file
-        String delimiter = ",";
-
-        try {
-            BufferedWriter br = new BufferedWriter(new FileWriter(outputFile, true));
-
-            //Create the header of the file
-            br.write("Student Name" + delimiter);
-            br.write("Student Number" + delimiter);
-            br.write("Course Name" + delimiter);
-            br.write("Module enrolled in" + delimiter);
-            br.write("Module completed" + delimiter); // need to add grade
-            br.write("Grade" + delimiter); // need to add grade
-            br.write("Module to repeat" + delimiter); // need the module
-            br.newLine();
-
-            for (StudentReport studentReport : studentReportList) {
-                //Save each row of the report
-                br.write(studentReport.getStudentName() + delimiter);
-                br.write(studentReport.getStudentId() + delimiter);
-                br.write(studentReport.getCourseName() + delimiter);
-                br.write(studentReport.getModuleEnrolledIn() + delimiter);
-                br.write(studentReport.getModuleCompleted() + delimiter);
-                br.write(studentReport.getGrade() + delimiter);
-                br.write(studentReport.getModuleRepeat() + delimiter);
-                br.newLine(); // Write a new line after each row
-            }
-
-            br.close();
-
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-
-    private static void saveLecturerReport(ArrayList<LecturerReport> lecturerReportList, String fileFormat) {
-        String outputFile = "lecturer_report." + fileFormat;
-
-        // Delimiter used in CSV file
-        String delimiter = ",";
-
-        try {
-            BufferedWriter br = new BufferedWriter(new FileWriter(outputFile, true));
-
-            //Create the header of the file
-            br.write("Lecturer Name" + delimiter);
-            br.write("Role" + delimiter);
-            br.write("Module" + delimiter);
-            br.write("Number of Students" + delimiter); // need to add grade
-            br.write("Type class" + delimiter); // need the module
-            br.newLine();
-
-            for (LecturerReport lecturerReport : lecturerReportList) {
-                //Save each row of the report
-                br.write(lecturerReport.getLecturerName() + delimiter);
-                br.write(lecturerReport.getLecturerRole() + delimiter);
-                br.write(lecturerReport.getModuleName() + delimiter);
-                br.write(lecturerReport.getNumberOfStudents() + delimiter);
-                br.write(lecturerReport.getModuleTypeClass() + delimiter);
-                br.newLine(); // Write a new line after each row
-            }
-
-            br.close();
-
-        } catch (IOException e) {
-            System.out.println(e);
-        }
     }
 }

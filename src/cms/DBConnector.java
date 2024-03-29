@@ -21,9 +21,10 @@ public class DBConnector {
     private final String DB_URL = "jdbc:mysql://127.0.0.1";
     private final String USER = "pooa2024";
     private final String PASSWORD = "pooa2024";
+    private final String DATABASE = "CMS";
 
     public ArrayList<CourseReport> getCourseReport() throws SQLException {
-        Connection conn = DriverManager.getConnection(DB_URL + "/CMS", USER, PASSWORD);
+        Connection conn = DriverManager.getConnection(DB_URL + "/" + DATABASE, USER, PASSWORD);
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT c.course_name AS courseName,\n"
                 + "m.module_name AS moduleName,\n"
                 + "COUNT(e.enrollment_id) AS numberOfStudents, \n"
@@ -55,7 +56,7 @@ public class DBConnector {
     }
 
     public ArrayList<StudentReport> getStudentReport() throws SQLException {
-        Connection conn = DriverManager.getConnection(DB_URL + "/CMS", USER, PASSWORD);
+        Connection conn = DriverManager.getConnection(DB_URL + "/" + DATABASE, USER, PASSWORD);
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT s.student_id AS studentId,\n"
                 + "s.student_name AS studentName,\n"
                 + "c.course_name AS courseName,\n"
@@ -87,7 +88,7 @@ public class DBConnector {
     }
 
     public ArrayList<LecturerReport> getLecturerReport() throws SQLException {
-        Connection conn = DriverManager.getConnection(DB_URL + "/CMS", USER, PASSWORD);
+        Connection conn = DriverManager.getConnection(DB_URL + "/" + DATABASE, USER, PASSWORD);
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT l.lecturer_name AS lecturerName,\n"
                 + "l.lecturer_name AS lecturerName,\n"
                 + "l.lecturer_role AS lecturerRole,\n"
@@ -123,7 +124,7 @@ public class DBConnector {
 
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
-        stmt.execute("USE CMS;");
+        stmt.execute("USE " + DATABASE);
         ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'"); //read data
         rs.next();
         String role = rs.getString("role");
@@ -139,13 +140,13 @@ public class DBConnector {
 
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
-        stmt.execute("USE CMS;");
+        stmt.execute("USE " + DATABASE);
         ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE user_id= " + userId); //read data
         rs.next();
         String role = rs.getString("role");
         String username = rs.getString("username");
         String password = rs.getString("password");
-        
+
         conn.close();
         User user = new User(username, password, role);
         user.setUser_id(userId);
@@ -156,7 +157,7 @@ public class DBConnector {
     public void addUser(User user) throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
-        stmt.execute("USE CMS;");
+        stmt.execute("USE " + DATABASE);
         stmt.execute(String.format("INSERT INTO users (username, password, role) VALUES ('%s', '%s', '%s');",
                 user.getUsername(), user.getPassword(), user.getRole()));
         conn.close();
@@ -165,18 +166,18 @@ public class DBConnector {
     public void updateUser(User user) throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
-        stmt.execute("USE CMS;");
+        stmt.execute("USE " + DATABASE);
         stmt.execute(String.format("UPDATE users SET username = '%s', password = '%s'"
                 + "WHERE user_id = %d ;",
                 user.getUsername(), user.getPassword(), user.getUser_id()));
         conn.close();
     }
-    
+
     public void deleteUser(int userId) throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
-        stmt.execute("USE CMS;");
-        stmt.execute(String.format("DELETE FROM users WHERE user_id = %d ;",userId));
+        stmt.execute("USE " + DATABASE);
+        stmt.execute(String.format("DELETE FROM users WHERE user_id = %d ;", userId));
         conn.close();
     }
 }
