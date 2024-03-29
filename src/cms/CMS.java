@@ -207,7 +207,7 @@ public class CMS {
 
         System.out.println("Inform the report file format you want to save (csv or txt)");
         String fileFormat = sc.next();
-        
+
         saveCourseReportFile(courseReportList, fileFormat);
 
         /* System.out.println("\nGenerating Student Report");
@@ -225,7 +225,7 @@ public class CMS {
         }*/
     }
 
-    private static void saveCourseReportFile(ArrayList<CourseReport> courseReport, String fileFormat) {
+    private static void saveCourseReportFile(ArrayList<CourseReport> courseReportList, String fileFormat) {
         String outputFile = "course_report." + fileFormat;
 
         // Delimiter used in CSV file
@@ -233,7 +233,7 @@ public class CMS {
 
         try {
             BufferedWriter br = new BufferedWriter(new FileWriter(outputFile, true));
-            
+
             //Create the header of the file
             br.write("Module Name" + delimiter);
             br.write("Course Name" + delimiter);
@@ -242,13 +242,50 @@ public class CMS {
             br.write("Room Name" + delimiter);
             br.newLine();
 
-            for (CourseReport rowData : courseReport) {
+            for (CourseReport courseReport : courseReportList) {
                 //Save each row of the report
-                br.write(rowData.getModuleName() + delimiter);
-                br.write(rowData.getCourseName() + delimiter);
-                br.write(String.valueOf(rowData.getNumberOfStudents()) + delimiter);
-                br.write(rowData.getRoomName() + delimiter);
-                 br.write(rowData.getLecturerName() + delimiter);
+                br.write(courseReport.getModuleName() + delimiter);
+                br.write(courseReport.getCourseName() + delimiter);
+                br.write(String.valueOf(courseReport.getNumberOfStudents()) + delimiter);
+                br.write(courseReport.getRoomName() + delimiter);
+                br.write(courseReport.getLecturerName() + delimiter);
+                br.newLine(); // Write a new line after each row
+            }
+
+            br.close();
+
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    private static void saveStudentReportFile(ArrayList<StudentReport> studentReportList, String fileFormat) {
+        String outputFile = "student_report." + fileFormat;
+
+        // Delimiter used in CSV file
+        String delimiter = ",";
+
+        try {
+            BufferedWriter br = new BufferedWriter(new FileWriter(outputFile, true));
+
+            //Create the header of the file
+            br.write("Student Name and Number" + delimiter);
+            br.write("Course Name" + delimiter);
+            br.write("Module enrolled in" + delimiter);
+            br.write("Module completed and grade" + delimiter); // need to add grade
+            br.write("Module to repeat" + delimiter); // need the module
+            br.newLine();
+
+            for (StudentReport studentReport : studentReportList) {
+                //Save each row of the report
+                br.write(studentReport.getStudentName() + "-" + studentReport.getStudentId() + delimiter);
+                br.write(studentReport.getCourseName() + delimiter);
+                br.write(studentReport.getModuleName() + delimiter);
+                br.write(studentReport.getModuleCompleted() + delimiter);
+                
+                br.write(String.valueOf(studentReport.getNumberOfStudents()) + delimiter);
+                br.write(studentReport.getRoomName() + delimiter);
+                br.write(studentReport.getLecturerName() + delimiter);
                 br.newLine(); // Write a new line after each row
             }
 
