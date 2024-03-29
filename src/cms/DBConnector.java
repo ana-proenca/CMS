@@ -23,6 +23,14 @@ public class DBConnector {
     private final String PASSWORD = "pooa2024";
     private final String DATABASE = "CMS";
 
+    /**
+     * method to get the Course report. Input parameter not defined Output value
+     * is the CourseReport class in which contains attributes that represent the
+     * Inner joins between Table in MySql
+     *
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<CourseReport> getCourseReport() throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL + "/" + DATABASE, USER, PASSWORD);
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT c.course_name AS courseName,\n"
@@ -55,6 +63,14 @@ public class DBConnector {
         return courseReportList;
     }
 
+    /**
+     * method to get the Course report. Input parameter not defined Output value
+     * is the CourseReport class in which contains attributes that represent the
+     * Inner joins between Table in MySql
+     *
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<StudentReport> getStudentReport() throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL + "/" + DATABASE, USER, PASSWORD);
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT s.student_id AS studentId,\n"
@@ -87,6 +103,14 @@ public class DBConnector {
         return studentReportList;
     }
 
+    /**
+     * method to get the Course report. Input parameter not defined Output value
+     * is the CourseReport class in which contains attributes that represent the
+     * Inner joins between Table in MySql
+     *
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<LecturerReport> getLecturerReport() throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL + "/" + DATABASE, USER, PASSWORD);
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT l.lecturer_name AS lecturerName,\n"
@@ -120,6 +144,16 @@ public class DBConnector {
         return lecturerReportList;
     }
 
+    /**
+     * Method to getUser or login user. It will make a select in the User table
+     * based on the Username and Password and will return the user that exists
+     * on the Users table
+     *
+     * @param username
+     * @param password
+     * @return
+     * @throws SQLException
+     */
     public User getUser(String username, String password) throws SQLException {
 
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -136,13 +170,25 @@ public class DBConnector {
         return user;
     }
 
+    /**
+     * Method to get the user by user Id. This method does not need to have the
+     * username and password provided, once it has the user_id it will be enough
+     * to get the record from the Users table
+     *
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
     public User getUser(int userId) throws SQLException {
 
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
         stmt.execute("USE " + DATABASE);
         ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE user_id= " + userId); //read data
-        rs.next();
+
+        if (!rs.next()) {
+            return null;
+        }
         String role = rs.getString("role");
         String username = rs.getString("username");
         String password = rs.getString("password");
@@ -154,6 +200,12 @@ public class DBConnector {
         return user;
     }
 
+    /**
+     * Method to create a new user in the Users table
+     *
+     * @param user
+     * @throws SQLException
+     */
     public void addUser(User user) throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
@@ -163,6 +215,13 @@ public class DBConnector {
         conn.close();
     }
 
+    /**
+     * Method to update the user in the Users table. It will update only
+     * username and password
+     *
+     * @param user
+     * @throws SQLException
+     */
     public void updateUser(User user) throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
@@ -173,6 +232,14 @@ public class DBConnector {
         conn.close();
     }
 
+    /**
+     * Delete an user from the Users table by the user id provided. this methods
+     * does not take in consideration username and password, as the userid is
+     * the primary key of the table
+     *
+     * @param userId
+     * @throws SQLException
+     */
     public void deleteUser(int userId) throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         Statement stmt = conn.createStatement();
