@@ -5,17 +5,17 @@
 package cms;
 
 /**
- * Class StudentReport represents the model of the report from the Inner joins between the table in MySql
+ * Class StudentReport represents the model of the report from the Inner joins between the table in MySQL
  * @author anaclaudiaproenca
  */
 public class StudentReport {
 
-    private String studentId;
-    private String studentName;
-    private String courseName;
-    private String moduleName;
-    private int grade;
-    private String moduleCompleted;
+    final String studentId;
+    final String studentName;
+    final String courseName;
+    final String moduleName;
+    final int grade;
+    final String moduleCompleted;
 
     /**
      * Constructor that initializes the StudenReport when the class is instantiate.
