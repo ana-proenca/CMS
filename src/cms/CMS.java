@@ -117,6 +117,7 @@ public class CMS {
                         break;
                     case 5:
                         userlogged = false;
+                        System.out.println("Bye bye ");
                         break;
                     default:
                         System.out.println("Invalid option");
@@ -155,6 +156,7 @@ public class CMS {
                     break;
                 case 3:
                     userlogged = false;
+                    System.out.println("Bye bye ");
                     break;
                 default:
                     System.out.println("Invalid option");
@@ -189,6 +191,7 @@ public class CMS {
                     break;
                 case 3:
                     userlogged = false;
+                    System.out.println("Bye bye ");
                     break;
                 default:
                     System.out.println("Invalid option");

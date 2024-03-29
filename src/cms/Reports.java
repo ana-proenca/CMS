@@ -33,15 +33,16 @@ public class Reports {
      */
     public Reports(Scanner sc) throws Exception {
         dbConnector = new DBConnector();
-
-        System.out.println("1-Export file");
-        System.out.println("2-Print output console");
+        System.out.println("\n");
+        System.out.println("1 - Export file");
+        System.out.println("2 - Print output console");
         int type = Integer.parseInt(sc.next());
 
         //Condition to decide whether the report will be generated as a file or printed in the console output.
         switch (type) {
             case 1:
                 fileOutput = true;
+                System.out.println("\n");
                 System.out.println("Inform the report file format you want to save (csv or txt)");
                 fileFormat = sc.next();
                 break;
