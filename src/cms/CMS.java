@@ -54,8 +54,12 @@ public class CMS {
             case "Office":
                 printOfficeMenu(sc, user, true);
                 break;
+                case "Lecturer":
+                printLecturerMenu(sc, user, true);
+                break;
             default:
-                throw new AssertionError();
+                System.out.println("Invalid option");
+                    break;
         }
     }
 
@@ -87,7 +91,8 @@ public class CMS {
                     userlogged = false;
                     break;
                 default:
-                    throw new AssertionError();
+                    System.out.println("Invalid option");
+                    break;
             }
         }
     }
@@ -112,7 +117,34 @@ public class CMS {
                     userlogged = false;
                     break;
                 default:
-                    throw new AssertionError();
+                    System.out.println("Invalid option");
+                    break;
+            }
+        }
+    }
+    
+    private static void printLecturerMenu(Scanner sc, User user, Boolean userlogged)throws Exception{
+       while (userlogged) {
+            System.out.println("\n");
+            System.out.println("1 - generate my report");
+            System.out.println("2 - change username and password");
+            System.out.println("3 - logoff");
+
+            int options = Integer.parseInt(sc.next());
+
+            switch (options) {
+                case 1:
+                    generateLectureReport(sc);
+                    break;
+                case 2:
+                    changeUsernameAndPassword(sc, user);
+                    break;
+                case 3:
+                    userlogged = false;
+                    break;
+                default:
+                    System.out.println("Invalid option");
+                    break;
             }
         }
     }
@@ -199,6 +231,21 @@ public class CMS {
         System.out.println("Username and password updated");
     }
 
+    private static void generateLectureReport(Scanner sc) throws Exception{
+        System.out.println("Inform the report file format you want to save (csv or txt)");
+        String fileFormat = sc.next();
+
+        DBConnector db = new DBConnector();
+        
+        System.out.println("\nGenerating Lecturer Report");
+        ArrayList<LecturerReport> lecturerReportList = db.getLecturerReport();
+
+        for (LecturerReport lecturerReport : lecturerReportList) {
+            System.out.println(lecturerReport.getLecturerName() + ", " + lecturerReport.getLecturerRole() + ", " + lecturerReport.getModuleName() + ", " + lecturerReport.getModuleDateStarted() + ", " + lecturerReport.getModuleTypeClass() + ", " + lecturerReport.getNumberOfStudents());
+        }
+
+        saveLecturerReport(lecturerReportList, fileFormat);
+    }
     private static void generateAllReports(Scanner sc) throws Exception {
         System.out.println("Inform the report file format you want to save (csv or txt)");
         String fileFormat = sc.next();
