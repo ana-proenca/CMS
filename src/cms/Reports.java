@@ -18,12 +18,28 @@ public class Reports {
 
     private DBConnector dbConnector;
     private String fileFormat;
+    private boolean fileOutput;
 
     public Reports(Scanner sc) {
         dbConnector = new DBConnector();
 
-        System.out.println("Inform the report file format you want to save (csv or txt)");
-        fileFormat = sc.next();
+        System.out.println("1-Export file");
+        System.out.println("2-Print output console");
+        int type = Integer.parseInt(sc.next());
+
+        switch (type) {
+            case 1:
+                fileOutput = true;
+                System.out.println("Inform the report file format you want to save (csv or txt)");
+                fileFormat = sc.next();
+                break;
+            case 2:
+                fileOutput = false;
+                break;
+            default:
+                System.out.println("Invalid option");
+                throw new AssertionError();
+        }
     }
 
     public void generateAllReports() throws Exception {
@@ -33,38 +49,42 @@ public class Reports {
     }
 
     public void generateLectureReport() throws Exception {
-
         System.out.println("\nGenerating Lecturer Report");
         ArrayList<LecturerReport> lecturerReportList = dbConnector.getLecturerReport();
 
-        for (LecturerReport lecturerReport : lecturerReportList) {
-            System.out.println(lecturerReport.getLecturerName() + ", " + lecturerReport.getLecturerRole() + ", " + lecturerReport.getModuleName() + ", " + lecturerReport.getModuleDateStarted() + ", " + lecturerReport.getModuleTypeClass() + ", " + lecturerReport.getNumberOfStudents());
+        if (fileOutput) {
+            saveLecturerReport(lecturerReportList, fileFormat);
+        } else {
+            for (LecturerReport lecturerReport : lecturerReportList) {
+                System.out.println(lecturerReport.getLecturerName() + ", " + lecturerReport.getLecturerRole() + ", " + lecturerReport.getModuleName() + ", " + lecturerReport.getModuleDateStarted() + ", " + lecturerReport.getModuleTypeClass() + ", " + lecturerReport.getNumberOfStudents());
+            }
         }
-
-        saveLecturerReport(lecturerReportList, fileFormat);
     }
 
     public void generateStudentReport() throws Exception {
-
         System.out.println("\nGenerating Student Report");
         ArrayList<StudentReport> studentReportList = dbConnector.getStudentReport();
 
-        for (StudentReport studentReport : studentReportList) {
-            System.out.println(studentReport.getStudentName() + ", " + studentReport.getStudentId() + ", " + studentReport.getCourseName() + ", " + studentReport.getModuleEnrolledIn() + ", " + studentReport.getModuleCompleted() + ", " + studentReport.getGrade() + ", " + studentReport.getModuleRepeat());
+        if (fileOutput) {
+            saveStudentReportFile(studentReportList, fileFormat);
+        } else {
+            for (StudentReport studentReport : studentReportList) {
+                System.out.println(studentReport.getStudentName() + ", " + studentReport.getStudentId() + ", " + studentReport.getCourseName() + ", " + studentReport.getModuleEnrolledIn() + ", " + studentReport.getModuleCompleted() + ", " + studentReport.getGrade() + ", " + studentReport.getModuleRepeat());
+            }
         }
-
-        saveStudentReportFile(studentReportList, fileFormat);
     }
 
     public void generateCourseReport() throws Exception {
         System.out.println("\nGenerating Course Report");
         ArrayList<CourseReport> courseReportList = dbConnector.getCourseReport();
 
-        for (CourseReport courseReport : courseReportList) {
-            System.out.println(courseReport.getCourseName() + ", " + courseReport.getModuleName() + ", " + courseReport.getNumberOfStudents() + ", " + courseReport.getLecturerName() + ", " + courseReport.getRoomName());
+        if (fileOutput) {
+            saveCourseReportFile(courseReportList, fileFormat);
+        } else {
+            for (CourseReport courseReport : courseReportList) {
+                System.out.println(courseReport.getCourseName() + ", " + courseReport.getModuleName() + ", " + courseReport.getNumberOfStudents() + ", " + courseReport.getLecturerName() + ", " + courseReport.getRoomName());
+            }
         }
-
-        saveCourseReportFile(courseReportList, fileFormat);
     }
 
     private void saveLecturerReport(ArrayList<LecturerReport> lecturerReportList, String fileFormat) {
