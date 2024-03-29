@@ -10,16 +10,14 @@ package cms;
  */
 public class LecturerReport {
     private String lecturerName;
-    private String lecturerSurname;
     private String lecturerRole;
     private String moduleName;
     private String moduleDateStarted;
     private int numberOfStudents;
     private String moduleTypeClass;
     
-    public LecturerReport(String lecturerName, String lecturerSurname, String lecturerRole, String moduleName, String moduleDateStarted, int numberOfStudents, String moduleTypeClass){
+    public LecturerReport(String lecturerName, String lecturerRole, String moduleName, String moduleDateStarted, int numberOfStudents, String moduleTypeClass){
         this.lecturerName = lecturerName;
-        this.lecturerSurname = lecturerSurname;
         this.lecturerRole = lecturerRole;
         this.moduleName = moduleName;
         this.moduleDateStarted = moduleDateStarted;
@@ -28,7 +26,7 @@ public class LecturerReport {
     }
 
     public String getLecturerName() {
-        return lecturerName + " " + lecturerSurname;
+        return lecturerName;
     }
 
     public String getLecturerRole() {

@@ -58,7 +58,6 @@ public class DBConnector {
         Connection conn = DriverManager.getConnection(DB_URL + "/CMS", USER, PASSWORD);
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT s.student_id AS studentId,\n"
                 + "s.student_name AS studentName,\n"
-                + "s.student_surname AS studentSurname,\n"
                 + "c.course_name AS courseName,\n"
                 + "m.module_name AS moduleName,\n"
                 + "g.grade AS grade,\n"
@@ -75,13 +74,12 @@ public class DBConnector {
         while (rs.next()) {
             String studentId = rs.getString("studentId");
             String studentName = rs.getString("studentName");
-            String studentSurname = rs.getString("studentSurname");
             String courseName = rs.getString("courseName");
             String moduleName = rs.getString("moduleName");
             int grade = rs.getInt("grade");
             String moduleCompleted = rs.getString("moduleCompleted");
 
-            studentReportList.add(new StudentReport(studentId, studentName, studentSurname, courseName, moduleName, grade, moduleCompleted));
+            studentReportList.add(new StudentReport(studentId, studentName, courseName, moduleName, grade, moduleCompleted));
         }
 
         conn.close();
@@ -91,7 +89,7 @@ public class DBConnector {
     public ArrayList<LecturerReport> getLecturerReport() throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL + "/CMS", USER, PASSWORD);
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT l.lecturer_name AS lecturerName,\n"
-                + "l.lecturer_surname AS lecturerSurname,\n"
+                + "l.lecturer_name AS lecturerName,\n"
                 + "l.lecturer_role AS lecturerRole,\n"
                 + "m.module_name as moduleName,\n"
                 + "m.module_started AS moduleDateStarted,\n"
@@ -100,7 +98,7 @@ public class DBConnector {
                 + "FROM lecturers l\n"
                 + "INNER JOIN modules m on l.lecturer_id = m.lecturer_id\n"
                 + "LEFT JOIN enrollments e on e.module_id = m.module_id\n"
-                + "GROUP BY l.lecturer_name, l.lecturer_surname, l.lecturer_role, m.module_name,\n"
+                + "GROUP BY l.lecturer_name, l.lecturer_role, m.module_name,\n"
                 + "m.module_started, m.module_type_class;");
         ResultSet rs = preparedStatement.executeQuery();
         rs.next();
@@ -108,14 +106,13 @@ public class DBConnector {
 
         while (rs.next()) {
             String lecturerName = rs.getString("lecturerName");
-            String lecturerSurname = rs.getString("lecturerSurname");
             String lecturerRole = rs.getString("lecturerRole");
             String moduleName = rs.getString("moduleName");
             String moduleDateStarted = rs.getString("moduleDateStarted");
             int numberOfStudents = rs.getInt("numberOfStudents");
             String moduleTypeClass = rs.getString("moduleTypeClass");
 
-            lecturerReportList.add(new LecturerReport(lecturerName, lecturerSurname, lecturerRole, moduleName, moduleDateStarted, numberOfStudents, moduleTypeClass));
+            lecturerReportList.add(new LecturerReport(lecturerName, lecturerRole, moduleName, moduleDateStarted, numberOfStudents, moduleTypeClass));
         }
 
         conn.close();

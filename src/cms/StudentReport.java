@@ -12,16 +12,14 @@ public class StudentReport {
 
     private String studentId;
     private String studentName;
-    private String studentSurname;
     private String courseName;
     private String moduleName;
     private int grade;
     private String moduleCompleted;
 
-    public StudentReport(String studentId, String studentName, String studentSurname, String courseName, String moduleName, int grade, String moduleCompleted) {
+    public StudentReport(String studentId, String studentName, String courseName, String moduleName, int grade, String moduleCompleted) {
         this.studentId = studentId;
         this.studentName = studentName;
-        this.studentSurname = studentSurname;
         this.courseName = courseName;
         this.moduleName = moduleName;
         this.grade = grade;
@@ -33,14 +31,14 @@ public class StudentReport {
     }
 
     public String getStudentName() {
-        return studentName + " " + studentSurname;
+        return studentName;
     }
 
     public String getCourseName() {
         return courseName;
     }
 
-    public String getModuleName() {
+    public String getModuleEnrolledIn() {
         return moduleName;
     }
 
@@ -49,6 +47,10 @@ public class StudentReport {
     }
 
     public String getModuleCompleted() {
-        return moduleCompleted;
+        return moduleCompleted.equals("yes") ? moduleName : "";
+    }
+    
+     public String getModuleRepeat() {
+        return moduleCompleted.equals("no") ? moduleName : "";
     }
 }
